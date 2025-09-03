@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: tomatoSliced
   m_EditorClassIdentifier: 
   id: tomato_sliced
-  mesh: {fileID: 167248594951572377, guid: a0a49442f308f8e459d97c0324dfc9b9, type: 3}
+  mesh: {fileID: 167248594951572377, guid: b8c8d309b331d634a9e3d54b88704c74, type: 3}
   nextObject: {fileID: 0}
