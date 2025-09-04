@@ -8,5 +8,6 @@ public class RecipeData : ScriptableObject
 {
     public String id;
     public ObjectData[] objectOrder;
+    public float GrabRadius;
 
 }

@@ -11,6 +11,11 @@ public class HandsMovement : MonoBehaviour
         Instance = this;
     }
 
+    public bool RLocked;
+    public bool LLocked;
+
+    [Header("")]
+
     public float HandsSensitivity;
     public float LerpSpeed;
     public Transform RArmTarget;
@@ -18,6 +23,11 @@ public class HandsMovement : MonoBehaviour
 
     Vector3 Lmove;
     Vector3 Rmove;
+
+    float Lh;
+    float Lv;
+    float Rh;
+    float Rv;
 
     [Header("Limits")]
 
@@ -27,11 +37,17 @@ public class HandsMovement : MonoBehaviour
 
     void Update()
     {
-        float Lh = Input.GetAxis("Horizontal");
-        float Lv = Input.GetAxis("Vertical");
+        if (!LLocked)
+        {
+            Lh = Input.GetAxis("Horizontal");
+            Lv = Input.GetAxis("Vertical");
+        }
 
-        float Rh = Input.GetAxis("Arrow Horizontal");
-        float Rv = Input.GetAxis("Arrow Vertical");
+        if (!RLocked)
+        {
+            Rh = Input.GetAxis("Arrow Horizontal");
+            Rv = Input.GetAxis("Arrow Vertical");
+        }
 
         AddMovement(Lh, Lv, Rh, Rv);
 
@@ -47,16 +63,16 @@ public class HandsMovement : MonoBehaviour
         if (Ldist > MaxRad)
             Lmove = Lmove.normalized * MaxRad;
 
-        if(Rdist > MaxRad)
+        if (Rdist > MaxRad)
             Rmove = Rmove.normalized * MaxRad;
 
         LArmTarget.localPosition = Vector3.Lerp(LArmTarget.localPosition, new Vector3(Lmove.x, LArmTarget.localPosition.y, Lmove.z), LerpSpeed * Time.deltaTime);
-        RArmTarget.localPosition = Vector3.Lerp(RArmTarget.localPosition, new Vector3(Rmove.x, RArmTarget.localPosition.y, Rmove.z),LerpSpeed * Time.deltaTime);
+        RArmTarget.localPosition = Vector3.Lerp(RArmTarget.localPosition, new Vector3(Rmove.x, RArmTarget.localPosition.y, Rmove.z), LerpSpeed * Time.deltaTime);
     }
 
-    public void AddMovement(float LH, float LV, float RH, float RV)
+    public void AddMovement(float LH, float LV, float RH, float RV, float LY = 0f, float RY = 0f)
     {
-        Lmove += new Vector3(LH, 0f, LV) * HandsSensitivity * Time.deltaTime;
-        Rmove += new Vector3(RH, 0f, RV) * HandsSensitivity * Time.deltaTime;
+        Lmove += new Vector3(LH, LY, LV) * HandsSensitivity * Time.deltaTime;
+        Rmove += new Vector3(RH, RY, RV) * HandsSensitivity * Time.deltaTime;
     }
 }

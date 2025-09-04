@@ -18,7 +18,6 @@ public class HandCollide : MonoBehaviour
     {
         if(other.tag == "Lower Arm")
         {
-
             if (armType == ArmType.RightArm)
                 HandsMovement.Instance.AddMovement(-HorizontalBounce, -VerticalBounce, 0f, 0f);
             if (armType == ArmType.LeftArm)
