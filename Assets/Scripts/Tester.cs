@@ -85,4 +85,9 @@ public class Tester : MonoBehaviour
         return true;
     }
 
+    ObjectData[] ClearArray()
+    {
+        return new ObjectData[0];
+    }
+
 }

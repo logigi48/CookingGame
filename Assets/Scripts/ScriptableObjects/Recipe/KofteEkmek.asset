@@ -10,9 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25eb98c416177d24ab48a55573198f86, type: 3}
-  m_Name: TomatoSoup
+  m_Name: KofteEkmek
   m_EditorClassIdentifier: 
-  id: tomato_soup
+  id: kofteekmek
   objectOrder:
-  - {fileID: 11400000, guid: 14d4931676cb7f246baef14574c5449a, type: 2}
+  - {fileID: 11400000, guid: d89b63217e0a9044db3812ca920c87d8, type: 2}
+  - {fileID: 11400000, guid: d80b8a0c8c624c545b2050c9a0ab24db, type: 2}
   - {fileID: 11400000, guid: faed477538905a34f8649a305cef7476, type: 2}
+  - {fileID: 11400000, guid: 0126cf24daeb40b458b8f0c3e613a7cc, type: 2}
+  - {fileID: 11400000, guid: 760bf97f3364caa4693992b3513588b9, type: 2}

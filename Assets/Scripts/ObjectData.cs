@@ -7,6 +7,7 @@ using UnityEngine;
 public class ObjectData : ScriptableObject
 {
     public String id;
+    public int formIndex;
     public GameObject mesh;
     public ObjectData nextObject;
 
