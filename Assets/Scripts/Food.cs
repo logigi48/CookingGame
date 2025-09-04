@@ -13,7 +13,7 @@ public class Food : MonoBehaviour
     void Start()
     {
         //instantiate the visual mesh accordingly
-        currentObj = GameObject.Instantiate(objectData.mesh, Vector3.zero, Quaternion.identity,this.transform);
+        currentObj = GameObject.Instantiate(objectData.mesh, transform.position, Quaternion.identity,this.transform);
     }
 
 

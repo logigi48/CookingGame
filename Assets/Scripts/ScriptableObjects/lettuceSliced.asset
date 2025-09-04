@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: lettuce_sliced
   formIndex: 1
-  mesh: {fileID: 167248594951572377, guid: a0a49442f308f8e459d97c0324dfc9b9, type: 3}
+  mesh: {fileID: 9122588213897988032, guid: aee91cba005577f44987c4f350a90ca8, type: 3}
   nextObject: {fileID: 0}

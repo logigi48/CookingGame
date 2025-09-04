@@ -13,8 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _MK_ENVIRONMENT_REFLECTIONS_AMBIENT
-  - _MK_LIGHT_CEL
-  - _MK_OUTLINE_HULL_ORIGIN
+  - _MK_LIGHT_BANDED
   - _MK_RECEIVE_SHADOWS
   - _MK_SPECULAR_ISOTROPIC
   m_InvalidKeywords:
@@ -222,7 +221,7 @@ Material:
     - _IridescenceSize: 1
     - _IridescenceSmoothness: 0.5
     - _IridescenceThresholdOffset: 0
-    - _Light: 1
+    - _Light: 2
     - _LightBands: 4
     - _LightBandsScale: 0.5
     - _LightThreshold: 0.5
@@ -230,14 +229,14 @@ Material:
     - _NormalMapIntensity: 1
     - _OcclusionStrength: 1
     - _OptionsTab: 1
-    - _Outline: 2
+    - _Outline: 1
     - _OutlineClipOffset: 0
     - _OutlineConstantSize: 0
     - _OutlineData: 0
     - _OutlineFadeMax: 2
     - _OutlineFadeMin: 0.25
     - _OutlineNoise: 0
-    - _OutlineSize: 50
+    - _OutlineSize: 0.4
     - _OutlineTab: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -278,15 +277,15 @@ Material:
     - _ZTest: 4
     - _ZWrite: 1
     m_Colors:
-    - _AlbedoColor: {r: 0.12578613, g: 0.12578613, b: 0.12578613, a: 1}
+    - _AlbedoColor: {r: 0.23899364, g: 0.23899364, b: 0.23899364, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.1257861, g: 0.1257861, b: 0.1257861, a: 1}
+    - _Color: {r: 0.23899361, g: 0.23899361, b: 0.23899361, a: 1}
     - _DissolveBorderColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GoochBrightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _GoochDarkColor: {r: 0.61635214, g: 0.5028878, b: 0.44772744, a: 1}
+    - _GoochDarkColor: {r: 0, g: 0, b: 0, a: 1}
     - _IridescenceColor: {r: 1, g: 1, b: 1, a: 0.5}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 0.106918216, g: 0.106918216, b: 0.106918216, a: 1}
     - _RimBrightColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimDarkColor: {r: 0, g: 0, b: 0, a: 1}

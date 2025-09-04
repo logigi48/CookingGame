@@ -5,27 +5,21 @@ using UnityEngine;
 public class Tester : MonoBehaviour
 {
 
-    public Food food;
-
     public RecipeData recipeData;
     ObjectData[] objectDatas;
+    public ServingPosition servingPosition;
 
     void Update()
     {
-        //test
-        if (Input.GetMouseButtonDown(1))
-        {
-            ObjectData newObj = food.objectData;
-            objectDatas = AddElement(objectDatas, newObj);
-            Debug.Log("Yeni eleman eklendi. Boyut: " + objectDatas.Length);
-        }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (CompareArrays(recipeData.objectOrder, objectDatas))
-                Debug.Log("Aynı");
+            //if (CompareArrays(recipeData.objectOrder, objectDatas))
+            //   Debug.Log("Aynı");
+            Debug.Log(servingPosition.Compare());
         }
     }
 
+    /**
     // Dinamik ekleme
     ObjectData[] AddElement(ObjectData[] array, ObjectData element)
     {
@@ -89,5 +83,5 @@ public class Tester : MonoBehaviour
     {
         return new ObjectData[0];
     }
-
+    **/
 }
