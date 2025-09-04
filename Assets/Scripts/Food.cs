@@ -8,9 +8,36 @@ public class Food : MonoBehaviour
 
     public ObjectData objectData;
 
+    GameObject currentObj;
+
     void Start()
     {
         //instantiate the visual mesh accordingly
-        GameObject.Instantiate(objectData.mesh, Vector3.zero, Quaternion.identity);
+        currentObj = GameObject.Instantiate(objectData.mesh, Vector3.zero, Quaternion.identity,this.transform);
     }
+
+
+    void Update()
+    {
+        //test
+        if (Input.GetMouseButtonDown(0))
+        {
+            ChangeObject();
+        }
+
+    }
+
+    public void ChangeObject()
+    {
+        
+        Debug.Log("It was " + objectData.id);
+        if (objectData.nextObject == null)
+            return;
+
+        Destroy(currentObj);
+        objectData = objectData.nextObject;
+        currentObj = GameObject.Instantiate(objectData.mesh, Vector3.zero, Quaternion.identity,this.transform);
+        Debug.Log("Now its " + objectData.id);
+    }
+
 }
