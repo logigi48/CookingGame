@@ -116,7 +116,7 @@ namespace MK.Toon.Editor
         internal static readonly GUIContent albedoMap = new GUIContent
         (
             "Albedo", 
-            "Albedo (RGBA) represents the base of your Material. Color (RGB) and Alpha (A) are used."
+            "Albedo (RGBA) represents the base of your Material. Color (RGB) and Alpha (A) are used. Slider controls how much the albedo map affects the surface color."
         );
         internal static readonly GUIContent specularColor = new GUIContent
         (
@@ -439,7 +439,7 @@ namespace MK.Toon.Editor
         internal static readonly GUIContent goochDarkColor = new GUIContent
         (
             "Dark",
-            ""
+            "Dark areas will interpolate between the albedo (RGB) and the dark gooch (RGB). (Mainlight Only)"
         );
         internal static readonly GUIContent goochRemap = new GUIContent
         (
@@ -450,7 +450,12 @@ namespace MK.Toon.Editor
         (
             "Dark", 
             "Dark gooch colors are used for shadowed areas of the material. \n\n" +
-            "Dark areas will interpolate between the albedo (RGB) and the dark gooch (RGB)."
+            "Dark areas will interpolate between the albedo (RGB) and the dark gooch (RGB). (Mainlight Only)"
+        );
+        internal static readonly GUIContent goochDarkRemapFadeWithIndirect = new GUIContent
+        (
+            "Fade With Indirect", 
+            "When enabled, the dark Gooch color blend toward the scenes indirect lighting (ambient/GI/APV), letting the material inherit the environments tint."
         );
         internal static readonly GUIContent colorGrading = new GUIContent
         (
@@ -722,6 +727,16 @@ namespace MK.Toon.Editor
             "Intensity", 
             "Intensity/brightness of the transmitted light.\n\n" +
             "A physically correct value would be 1 (Built-in lighting style). However on some lighting styles you need to exposure your highlights."
+        );
+        internal static readonly GUIContent screenSpaceReflections = new GUIContent
+        (
+            "Screen Space Reflections",
+            "When enabled, the Material samples screen space reflections."
+        );
+        internal static readonly GUIContent screenSpaceReflectionsContributeTransparent = new GUIContent
+        (
+            "Contribute Screen Space Reflections",
+            "When enabled, this Material will contribute to screen space reflections. This will include the object in the transparency-depth prepass."
         );
         internal static readonly GUIContent environmentReflections = new GUIContent
         (

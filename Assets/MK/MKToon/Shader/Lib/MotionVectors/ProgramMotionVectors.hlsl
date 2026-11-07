@@ -9,7 +9,6 @@
 #ifndef MK_TOON_MOTION_VECTORS
 	#define MK_TOON_MOTION_VECTORS
 	
-	#include "../Core.hlsl"
 	#include "Data.hlsl"
 	#include "../Surface.hlsl"
 
@@ -27,6 +26,16 @@
 		#ifdef MK_VERTEX_ANIMATION
 			vertexInput.vertex.xyz = VertexAnimation(PASS_VERTEX_ANIMATION_ARG(_VertexAnimationMap, PASS_VERTEX_ANIMATION_UV(vertexInput.texcoord0.xy), _VertexAnimationIntensity, _VertexAnimationFrequency.xyz, vertexInput.vertex.xyz, vertexInput.normal));
 		#endif
+
+		//CurvedWorldSupport
+		//CurvedWorldVertexTransformations
+		/*
+			Replace on the Vertex Transformation code the following:
+			- v.vertex => vertexInput.vertex
+			- v.normal => vertexInput.normal
+			- v.tangent => vertexInput.tangent
+		*/
+		//
 
 		vertexOutput.svPositionClip = ComputeObjectToClipSpace(vertexInput.vertex.xyz);
 
@@ -64,7 +73,9 @@
 		#endif
     	vertexOutput.previousPositionCSNoJitter = mul(_PrevViewProjMatrix, mul(UNITY_PREV_MATRIX_M, prevPos));
     	#ifndef MK_URP_6000_1_0_OR_NEWER
-			ApplyMotionVectorZBias(vertexOutput.svPositionClip);
+			#if UNITY_VERSION < 60020000
+				ApplyMotionVectorZBias(vertexOutput.svPositionClip);
+			#endif
 		#endif
 
 		return vertexOutput;

@@ -9,8 +9,6 @@
 #ifndef MK_TOON_SURFACE
 	#define MK_TOON_SURFACE
 
-	#include "Core.hlsl"
-
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// Surface Data
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +97,7 @@
 		#ifdef MK_DISSOLVE
 			half dissolveClip;
 		#endif
-		#ifdef MK_USE_APV_PROBE_OCCLUSION
+		#ifdef USE_APV_PROBE_OCCLUSION
 			float4 probeOcclusion;
 		#endif
 
@@ -202,7 +200,7 @@
 		#define SURFACE_FLIPBOOK_UV 0
 	#endif
 
-	#ifdef MK_USE_APV_PROBE_OCCLUSION
+	#ifdef USE_APV_PROBE_OCCLUSION
 		#define PASS_PROBE_OCCLUSION_ARG(probeOcclusion) ,probeOcclusion
 	#else
 		#define PASS_PROBE_OCCLUSION_ARG(probeOcclusion)
@@ -294,7 +292,7 @@
 		#ifdef MK_OUTLINE_PASS
 			c = half4(color.rgb, SAMPLE_SAMPLER2D_FLIPBOOK(albedoMap, uv, blendUV).a * color.a);
 		#else
-			c = SAMPLE_SAMPLER2D_FLIPBOOK(albedoMap, uv, blendUV);
+			c = lerp(half4(1, 1, 1, 1), SAMPLE_SAMPLER2D_FLIPBOOK(albedoMap, uv, blendUV), _AlbedoMapIntensity);
 			c *= color;
 		#endif
 		albedo = c.rgb;
@@ -387,7 +385,7 @@
 		#ifdef MK_FLIPBOOK
 			, in float3 flipbookUV
 		#endif
-		#ifdef MK_USE_APV_PROBE_OCCLUSION
+		#ifdef USE_APV_PROBE_OCCLUSION
 			, in float4 probeOcclusion
 		#endif
 		#ifdef MK_VFACE
@@ -403,12 +401,20 @@
 			surfaceData.positionWorld = positionWorld;
 		#endif
 		#ifdef MK_FOG
-			surfaceData.fogFactor = fogFactor;
+			#if UNITY_VERSION >= 202230
+				#ifdef MK_URP
+					surfaceData.fogFactor = InitializeInputDataFog(float4(positionWorld, 1.0), 0.0);
+				#else
+					surfaceData.fogFactor = fogFactor;
+				#endif
+			#else
+				surfaceData.fogFactor = fogFactor;
+			#endif
 		#endif
 
 		#if defined(MK_URP_2020_2_Or_Newer) && defined(MK_LIT)
 			#if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
-				surfaceData.shadowMask = SAMPLE_SHADOWMASK(lightmapUV);
+				surfaceData.shadowMask = SAMPLE_SHADOWMASK(lightmapUV.xy);
 			#elif !defined (LIGHTMAP_ON)
 				surfaceData.shadowMask = unity_ProbesOcclusion;
 			#else
@@ -416,7 +422,7 @@
 			#endif
 		#endif
 
-		#ifdef MK_USE_APV_PROBE_OCCLUSION
+		#ifdef USE_APV_PROBE_OCCLUSION
 			surfaceData.probeOcclusion = probeOcclusion;
 		#endif
 
@@ -596,21 +602,21 @@
 			#endif
 		#endif
 
-		#ifndef _DBUFFER
-			#ifdef MK_V_DOT_N
-				surfaceData.VoN = saturate(dot(surfaceData.viewWorld, surfaceData.normalWorld));
-				surfaceData.OneMinusVoN = 1.0 - surfaceData.VoN;
-			#endif
-			#ifdef MK_MV_REF_N
-				surfaceData.MVrN = reflect(-surfaceData.viewWorld, surfaceData.normalWorld);
-			#endif
-		#else
+		#if defined(_DBUFFER)
 			#ifdef MK_V_DOT_N
 				surfaceData.VoN = 0;
 				surfaceData.OneMinusVoN = 0;
 			#endif
 			#ifdef MK_MV_REF_N
 				surfaceData.MVrN = 0;
+			#endif
+		#else
+			#ifdef MK_V_DOT_N
+				surfaceData.VoN = saturate(dot(surfaceData.viewWorld, surfaceData.normalWorld));
+				surfaceData.OneMinusVoN = 1.0 - surfaceData.VoN;
+			#endif
+			#ifdef MK_MV_REF_N
+				surfaceData.MVrN = reflect(-surfaceData.viewWorld, surfaceData.normalWorld);
 			#endif
 		#endif
 
@@ -729,7 +735,7 @@
 			pbsData.smoothness = pbsInput.a;
 		#endif
 
-		#ifdef _DBUFFER
+		#if defined(_DBUFFER)
 			#ifdef MK_LIT
 				#if defined(MK_WORKFLOW_SPECULAR) || defined(MK_SIMPLE)
 					half metallic = 0;

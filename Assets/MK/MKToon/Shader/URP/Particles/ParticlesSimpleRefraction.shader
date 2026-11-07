@@ -61,6 +61,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		_GoochDarkColor ("", Color) = (0, 0, 0, 1)
 		_GoochDarkRemapMin ("", Range (0.0, 1.0)) = 0.0
 		_GoochDarkRemapMax ("", Range (0.0, 1.0)) = 1.0
+		[Toggle] _GoochDarkRemapFadeWithIndirect ("", int) = 0
 		_Contrast ("", Float) = 1.0
 		_Hue ("", Range(0.0, 1.0)) = 0.0
 		[MKToonSaturation] _Saturation ("", Float) = 1.0
@@ -169,6 +170,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		[HideInInspector] _MainTex ("", 2D) = "white" {}
 		[HideInInspector] _Color ("", Color) = (1,1,1,1)
 	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// SM 4.5
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +207,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
 			HLSLPROGRAM
 			#pragma target 4.5
-			#pragma exclude_renderers gles gles3 glcore d3d11_9x wiiu n3ds switch
+			#pragma exclude_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
 			#pragma shader_feature_local __ _MK_SOFT_FADE
 			#pragma shader_feature_local __ _MK_CAMERA_FADE
@@ -234,8 +237,16 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_COLOR_GRADING_ALBEDO _MK_COLOR_GRADING_FINAL_OUTPUT
 			#pragma shader_feature_local __ _MK_GOOCH_RAMP
 			//#pragma shader_feature_local __ _MK_WRAPPED_DIFFUSE
+
+			#if UNITY_VERSION >= 202310
+				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+			#endif
 			#pragma shader_feature_local __ _MK_REFRACTION_DISTORTION_MAP
 			#pragma shader_feature_local __ _MK_INDEX_OF_REFRACTION
+
+			#if UNITY_VERSION >= 202010
+				#pragma multi_compile_fragment __ _SCREEN_SPACE_OCCLUSION
+			#endif
 
 			#if UNITY_VERSION >= 202120
 				#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
@@ -254,6 +265,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#pragma multi_compile_fragment __ _ADDITIONAL_LIGHT_SHADOWS
+			#if UNITY_VERSION >= 60030000
+				#pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+				#pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+			#endif
 			#if UNITY_VERSION >= 202330
 				#pragma multi_compile_fragment __ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 			#else
@@ -268,10 +283,6 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 			#if UNITY_VERSION >= 202310
 				#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-			#endif
-
-			#if UNITY_VERSION >= 202010
-				#pragma multi_compile __ _SCREEN_SPACE_OCCLUSION
 			#endif
 
 			#if UNITY_VERSION >= 202020
@@ -289,20 +300,16 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#if UNITY_VERSION >= 202220
-				#if UNITY_VERSION >= 202310
-					#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
-				#else
-					#pragma multi_compile_fragment _ _WRITE_RENDERING_LAYERS
-				#endif
 				#if UNITY_VERSION >= 60010000
 					#pragma multi_compile _ _CLUSTER_LIGHT_LOOP
 				#else
 					#pragma multi_compile _ _FORWARD_PLUS
 				#endif
-			#endif
-
-			#if UNITY_VERSION >= 202310
-				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+				#if UNITY_VERSION >= 202310
+					#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+				#else
+					#pragma multi_compile_fragment _ _WRITE_RENDERING_LAYERS
+				#endif
 			#endif
 
 			#pragma fragmentoption ARB_precision_hint_fastest
@@ -324,7 +331,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_PARTICLES
 			#define MK_SIMPLE
 
-			#include "../../Lib/Forward/BaseSetup.hlsl"
+			#include_with_pragmas "../../Lib/Forward/BaseSetup.hlsl"
 			
 			ENDHLSL
 		}
@@ -355,7 +362,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
 			HLSLPROGRAM
 			#pragma target 4.5
-			#pragma exclude_renderers gles gles3 glcore d3d11_9x wiiu n3ds switch
+			#pragma exclude_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
 			#pragma shader_feature_local __ _MK_SOFT_FADE
 			#pragma shader_feature_local __ _MK_CAMERA_FADE
@@ -384,8 +392,16 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_COLOR_GRADING_ALBEDO _MK_COLOR_GRADING_FINAL_OUTPUT
 			#pragma shader_feature_local __ _MK_GOOCH_RAMP
 			//#pragma shader_feature_local __ _MK_WRAPPED_DIFFUSE
+
+			#if UNITY_VERSION >= 202310
+				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+			#endif
 			#pragma shader_feature_local __ _MK_REFRACTION_DISTORTION_MAP
 			#pragma shader_feature_local __ _MK_INDEX_OF_REFRACTION
+
+			#if UNITY_VERSION >= 202010
+				#pragma multi_compile_fragment __ _SCREEN_SPACE_OCCLUSION
+			#endif
 
 			#if UNITY_VERSION >= 202120
 				#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
@@ -404,6 +420,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#pragma multi_compile_fragment __ _ADDITIONAL_LIGHT_SHADOWS
+			#if UNITY_VERSION >= 60030000
+				#pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+				#pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+			#endif
 			#if UNITY_VERSION >= 202330
 				#pragma multi_compile_fragment __ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 			#else
@@ -418,10 +438,6 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 			#if UNITY_VERSION >= 202310
 				#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-			#endif
-
-			#if UNITY_VERSION >= 202010
-				#pragma multi_compile __ _SCREEN_SPACE_OCCLUSION
 			#endif
 
 			#if UNITY_VERSION >= 202020
@@ -439,20 +455,16 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#if UNITY_VERSION >= 202220
-				#if UNITY_VERSION >= 202310
-					#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
-				#else
-					#pragma multi_compile_fragment _ _WRITE_RENDERING_LAYERS
-				#endif
 				#if UNITY_VERSION >= 60010000
 					#pragma multi_compile _ _CLUSTER_LIGHT_LOOP
 				#else
 					#pragma multi_compile _ _FORWARD_PLUS
 				#endif
-			#endif
-
-			#if UNITY_VERSION >= 202310
-				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+				#if UNITY_VERSION >= 202310
+					#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+				#else
+					#pragma multi_compile_fragment _ _WRITE_RENDERING_LAYERS
+				#endif
 			#endif
 
 			#pragma fragmentoption ARB_precision_hint_fastest
@@ -474,7 +486,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_PARTICLES
 			#define MK_SIMPLE
 
-			#include "../../Lib/Forward/BaseSetup.hlsl"
+			#include_with_pragmas "../../Lib/Forward/BaseSetup.hlsl"
 			
 			ENDHLSL
 		}
@@ -500,6 +512,17 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		Pass
         {
+            Stencil
+			{
+				Ref [_StencilRef]
+				ReadMask [_StencilReadMask]
+				WriteMask [_StencilWriteMask]
+				Comp [_StencilComp]
+				Pass [_StencilPass]
+				Fail [_StencilFail]
+				ZFail [_StencilZFail]
+			}
+			
             Name "DepthOnly"
             Tags { "LightMode" = "DepthOnly" }
 
@@ -509,7 +532,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 4.5
-			#pragma exclude_renderers gles gles3 glcore d3d11_9x wiiu n3ds switch
+			#pragma exclude_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
             #pragma vertex DepthOnlyVert
             #pragma fragment DepthOnlyFrag
@@ -529,7 +553,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_SIMPLE
 			#define MK_PARTICLES
 
-            #include "../../Lib/DepthOnly/Setup.hlsl"
+            #include_with_pragmas "../../Lib/DepthOnly/Setup.hlsl"
             ENDHLSL
         }
 
@@ -538,6 +562,21 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		Pass
         {
+            PackageRequirements 
+			{
+				"com.unity.render-pipelines.universal":"[7.0,16.99]"
+			}
+            Stencil
+			{
+				Ref [_StencilRef]
+				ReadMask [_StencilReadMask]
+				WriteMask [_StencilWriteMask]
+				Comp [_StencilComp]
+				Pass [_StencilPass]
+				Fail [_StencilFail]
+				ZFail [_StencilZFail]
+			}
+			
             Name "DepthNormals"
             Tags { "LightMode" = "DepthNormals" }
 
@@ -546,7 +585,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 4.5
-			#pragma exclude_renderers gles gles3 glcore d3d11_9x wiiu n3ds switch
+			#pragma exclude_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
             #pragma vertex DepthNormalsVert
             #pragma fragment DepthNormalsFrag
@@ -557,6 +597,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_VERTEX_ANIMATION_MAP
             #pragma shader_feature_local __ _MK_ALBEDO_MAP
             #pragma shader_feature_local __ _MK_ALPHA_CLIPPING
+			#pragma shader_feature_local __ _MK_NORMAL_MAP
+			#pragma shader_feature_local __ _MK_DETAIL_NORMAL_MAP
+			#pragma shader_feature_local __ _MK_HEIGHT_MAP
+			#pragma shader_feature_local __ _MK_PARALLAX
 
 			#if UNITY_VERSION >= 202220
 				#if UNITY_VERSION >= 202310
@@ -574,7 +618,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_SIMPLE
 			#define MK_PARTICLES
 
-            #include "../../Lib/DepthNormals/Setup.hlsl"
+            #include_with_pragmas "../../Lib/DepthNormals/Setup.hlsl"
             ENDHLSL
         }
 		
@@ -591,8 +635,9 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
             Cull [_RenderFace]
 
             HLSLPROGRAM
-            #pragma exclude_renderers gles gles3 glcore d3d11_9x wiiu n3ds switch
+            
 			#pragma target 4.5
+			#pragma exclude_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
 
             #pragma vertex Universal2DVert
             #pragma fragment Universal2DFrag
@@ -611,7 +656,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_UNLIT
 			#define MK_PARTICLES
 
-            #include "../../Lib/Universal2D/Setup.hlsl"
+            #include_with_pragmas "../../Lib/Universal2D/Setup.hlsl"
 
             ENDHLSL
         }
@@ -653,7 +698,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
 			HLSLPROGRAM
 			#pragma target 3.5
-			#pragma exclude_renderers gles d3d11_9x ps4 ps5 xboxone
+			#pragma only_renderers glcore gles3
+			
 
 			#pragma shader_feature_local __ _MK_SOFT_FADE
 			#pragma shader_feature_local __ _MK_CAMERA_FADE
@@ -682,8 +728,16 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_COLOR_GRADING_ALBEDO _MK_COLOR_GRADING_FINAL_OUTPUT
 			#pragma shader_feature_local __ _MK_GOOCH_RAMP
 			//#pragma shader_feature_local __ _MK_WRAPPED_DIFFUSE
+
+			#if UNITY_VERSION >= 202310
+				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+			#endif
 			#pragma shader_feature_local __ _MK_REFRACTION_DISTORTION_MAP
 			#pragma shader_feature_local __ _MK_INDEX_OF_REFRACTION
+
+			#if UNITY_VERSION >= 202010
+				#pragma multi_compile_fragment __ _SCREEN_SPACE_OCCLUSION
+			#endif
 
 			#if UNITY_VERSION >= 202120
 				#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
@@ -702,6 +756,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#pragma multi_compile_fragment __ _ADDITIONAL_LIGHT_SHADOWS
+			#if UNITY_VERSION >= 60030000
+				#pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+				#pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+			#endif
 			#if UNITY_VERSION >= 202330
 				#pragma multi_compile_fragment __ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 			#else
@@ -716,10 +774,6 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 			#if UNITY_VERSION >= 202310
 				#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-			#endif
-
-			#if UNITY_VERSION >= 202010
-				#pragma multi_compile __ _SCREEN_SPACE_OCCLUSION
 			#endif
 
 			#if UNITY_VERSION >= 202020
@@ -768,7 +822,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_PARTICLES
 			#define MK_SIMPLE
 
-			#include "../../Lib/Forward/BaseSetup.hlsl"
+			#include_with_pragmas "../../Lib/Forward/BaseSetup.hlsl"
 			
 			ENDHLSL
 		}
@@ -799,7 +853,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
 			HLSLPROGRAM
 			#pragma target 3.5
-			#pragma exclude_renderers gles d3d11_9x ps4 ps5 xboxone
+			#pragma only_renderers glcore gles3
+			
 
 			#pragma shader_feature_local __ _MK_SOFT_FADE
 			#pragma shader_feature_local __ _MK_CAMERA_FADE
@@ -828,8 +883,16 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_COLOR_GRADING_ALBEDO _MK_COLOR_GRADING_FINAL_OUTPUT
 			#pragma shader_feature_local __ _MK_GOOCH_RAMP
 			//#pragma shader_feature_local __ _MK_WRAPPED_DIFFUSE
+
+			#if UNITY_VERSION >= 202310
+				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+			#endif
 			#pragma shader_feature_local __ _MK_REFRACTION_DISTORTION_MAP
 			#pragma shader_feature_local __ _MK_INDEX_OF_REFRACTION
+
+			#if UNITY_VERSION >= 202010
+				#pragma multi_compile_fragment __ _SCREEN_SPACE_OCCLUSION
+			#endif
 
 			#if UNITY_VERSION >= 202120
 				#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
@@ -848,6 +911,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#pragma multi_compile_fragment __ _ADDITIONAL_LIGHT_SHADOWS
+			#if UNITY_VERSION >= 60030000
+				#pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+				#pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+			#endif
 			#if UNITY_VERSION >= 202330
 				#pragma multi_compile_fragment __ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 			#else
@@ -862,10 +929,6 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 			#if UNITY_VERSION >= 202310
 				#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-			#endif
-
-			#if UNITY_VERSION >= 202010
-				#pragma multi_compile __ _SCREEN_SPACE_OCCLUSION
 			#endif
 
 			#if UNITY_VERSION >= 202020
@@ -914,7 +977,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_PARTICLES
 			#define MK_SIMPLE
 
-			#include "../../Lib/Forward/BaseSetup.hlsl"
+			#include_with_pragmas "../../Lib/Forward/BaseSetup.hlsl"
 			
 			ENDHLSL
 		}
@@ -940,6 +1003,17 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		Pass
         {
+            Stencil
+			{
+				Ref [_StencilRef]
+				ReadMask [_StencilReadMask]
+				WriteMask [_StencilWriteMask]
+				Comp [_StencilComp]
+				Pass [_StencilPass]
+				Fail [_StencilFail]
+				ZFail [_StencilZFail]
+			}
+			
             Name "DepthOnly"
             Tags { "LightMode" = "DepthOnly" }
 
@@ -949,7 +1023,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 3.5
-			#pragma exclude_renderers gles d3d11_9x ps4 ps5 xboxone
+			#pragma only_renderers glcore gles3
+			
 
             #pragma vertex DepthOnlyVert
             #pragma fragment DepthOnlyFrag
@@ -969,7 +1044,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_SIMPLE
 			#define MK_PARTICLES
 
-            #include "../../Lib/DepthOnly/Setup.hlsl"
+            #include_with_pragmas "../../Lib/DepthOnly/Setup.hlsl"
             ENDHLSL
         }
 
@@ -978,6 +1053,21 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		Pass
         {
+            PackageRequirements 
+			{
+				"com.unity.render-pipelines.universal":"[7.0,16.99]"
+			}
+            Stencil
+			{
+				Ref [_StencilRef]
+				ReadMask [_StencilReadMask]
+				WriteMask [_StencilWriteMask]
+				Comp [_StencilComp]
+				Pass [_StencilPass]
+				Fail [_StencilFail]
+				ZFail [_StencilZFail]
+			}
+			
             Name "DepthNormals"
             Tags { "LightMode" = "DepthNormals" }
 
@@ -986,7 +1076,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 3.5
-			#pragma exclude_renderers gles d3d11_9x ps4 ps5 xboxone
+			#pragma only_renderers glcore gles3
+			
 
             #pragma vertex DepthNormalsVert
             #pragma fragment DepthNormalsFrag
@@ -997,6 +1088,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_VERTEX_ANIMATION_MAP
             #pragma shader_feature_local __ _MK_ALBEDO_MAP
             #pragma shader_feature_local __ _MK_ALPHA_CLIPPING
+			#pragma shader_feature_local __ _MK_NORMAL_MAP
+			#pragma shader_feature_local __ _MK_DETAIL_NORMAL_MAP
+			#pragma shader_feature_local __ _MK_HEIGHT_MAP
+			#pragma shader_feature_local __ _MK_PARALLAX
 
 			#if UNITY_VERSION >= 202220
 				#if UNITY_VERSION >= 202310
@@ -1014,7 +1109,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_SIMPLE
 			#define MK_PARTICLES
 
-            #include "../../Lib/DepthNormals/Setup.hlsl"
+            #include_with_pragmas "../../Lib/DepthNormals/Setup.hlsl"
             ENDHLSL
         }
 		
@@ -1031,8 +1126,9 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
             Cull [_RenderFace]
 
             HLSLPROGRAM
-            #pragma exclude_renderers gles d3d11_9x ps4 ps5 xboxone
+            
 			#pragma target 3.5
+			#pragma only_renderers glcore gles3
 
             #pragma vertex Universal2DVert
             #pragma fragment Universal2DFrag
@@ -1051,7 +1147,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_UNLIT
 			#define MK_PARTICLES
 
-            #include "../../Lib/Universal2D/Setup.hlsl"
+            #include_with_pragmas "../../Lib/Universal2D/Setup.hlsl"
 
             ENDHLSL
         }
@@ -1093,7 +1189,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
 			HLSLPROGRAM
 			#pragma target 2.5
-			#pragma exclude_renderers gles3 d3d11 ps4 ps5 xboxone wiiu n3ds switch
+			#pragma only_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 			#pragma shader_feature_local __ _MK_SOFT_FADE
 			#pragma shader_feature_local __ _MK_CAMERA_FADE
 			#pragma shader_feature_local __ _MK_COLOR_BLEND_ADDITIVE _MK_COLOR_BLEND_SUBTRACTIVE _MK_COLOR_BLEND_OVERLAY _MK_COLOR_BLEND_COLOR _MK_COLOR_BLEND_DIFFERENCE
@@ -1119,10 +1216,19 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_COLOR_GRADING_ALBEDO _MK_COLOR_GRADING_FINAL_OUTPUT
 			#pragma shader_feature_local __ _MK_GOOCH_RAMP
 			//#pragma shader_feature_local __ _MK_WRAPPED_DIFFUSE
+
+			#if UNITY_VERSION >= 202310
+				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+			#endif
 			#pragma shader_feature_local __ _MK_REFRACTION_DISTORTION_MAP
 			#pragma shader_feature_local __ _MK_INDEX_OF_REFRACTION
 
+			#if UNITY_VERSION >= 202010
+				#pragma multi_compile_fragment __ _SCREEN_SPACE_OCCLUSION
+			#endif
+
 			#if UNITY_VERSION >= 202120
+				#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
 				#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
 				#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
 				#if UNITY_VERSION >= 60010000
@@ -1138,6 +1244,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#pragma multi_compile_fragment __ _ADDITIONAL_LIGHT_SHADOWS
+			#if UNITY_VERSION >= 60030000
+				#pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+				#pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+			#endif
 			#if UNITY_VERSION >= 202330
 				#pragma multi_compile_fragment __ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 			#else
@@ -1152,10 +1262,6 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 			#if UNITY_VERSION >= 202310
 				#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-			#endif
-
-			#if UNITY_VERSION >= 202010
-				#pragma multi_compile __ _SCREEN_SPACE_OCCLUSION
 			#endif
 
 			#if UNITY_VERSION >= 202020
@@ -1191,7 +1297,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_PARTICLES
 			#define MK_SIMPLE
 
-			#include "../../Lib/Forward/BaseSetup.hlsl"
+			#include_with_pragmas "../../Lib/Forward/BaseSetup.hlsl"
 			
 			ENDHLSL
 		}
@@ -1222,7 +1328,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
 			HLSLPROGRAM
 			#pragma target 2.5
-			#pragma exclude_renderers gles3 d3d11 ps4 ps5 xboxone wiiu n3ds switch
+			#pragma only_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 			#pragma shader_feature_local __ _MK_SOFT_FADE
 			#pragma shader_feature_local __ _MK_CAMERA_FADE
 			#pragma shader_feature_local __ _MK_COLOR_BLEND_ADDITIVE _MK_COLOR_BLEND_SUBTRACTIVE _MK_COLOR_BLEND_OVERLAY _MK_COLOR_BLEND_COLOR _MK_COLOR_BLEND_DIFFERENCE
@@ -1248,10 +1355,19 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_COLOR_GRADING_ALBEDO _MK_COLOR_GRADING_FINAL_OUTPUT
 			#pragma shader_feature_local __ _MK_GOOCH_RAMP
 			//#pragma shader_feature_local __ _MK_WRAPPED_DIFFUSE
+
+			#if UNITY_VERSION >= 202310
+				#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
+			#endif
 			#pragma shader_feature_local __ _MK_REFRACTION_DISTORTION_MAP
 			#pragma shader_feature_local __ _MK_INDEX_OF_REFRACTION
 
+			#if UNITY_VERSION >= 202010
+				#pragma multi_compile_fragment __ _SCREEN_SPACE_OCCLUSION
+			#endif
+
 			#if UNITY_VERSION >= 202120
+				#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
 				#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
 				#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
 				#if UNITY_VERSION >= 60010000
@@ -1267,6 +1383,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 
 			#pragma multi_compile_fragment __ _ADDITIONAL_LIGHT_SHADOWS
+			#if UNITY_VERSION >= 60030000
+				#pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+				#pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+			#endif
 			#if UNITY_VERSION >= 202330
 				#pragma multi_compile_fragment __ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 			#else
@@ -1281,10 +1401,6 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#endif
 			#if UNITY_VERSION >= 202310
 				#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-			#endif
-
-			#if UNITY_VERSION >= 202010
-				#pragma multi_compile __ _SCREEN_SPACE_OCCLUSION
 			#endif
 
 			#if UNITY_VERSION >= 202020
@@ -1320,7 +1436,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_PARTICLES
 			#define MK_SIMPLE
 
-			#include "../../Lib/Forward/BaseSetup.hlsl"
+			#include_with_pragmas "../../Lib/Forward/BaseSetup.hlsl"
 			
 			ENDHLSL
 		}
@@ -1346,6 +1462,17 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		Pass
         {
+            Stencil
+			{
+				Ref [_StencilRef]
+				ReadMask [_StencilReadMask]
+				WriteMask [_StencilWriteMask]
+				Comp [_StencilComp]
+				Pass [_StencilPass]
+				Fail [_StencilFail]
+				ZFail [_StencilZFail]
+			}
+			
             Name "DepthOnly"
             Tags { "LightMode" = "DepthOnly" }
 
@@ -1355,7 +1482,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 2.5
-			#pragma exclude_renderers gles3 d3d11 ps4 ps5 xboxone wiiu n3ds switch
+			#pragma only_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
             #pragma vertex DepthOnlyVert
             #pragma fragment DepthOnlyFrag
@@ -1375,7 +1503,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_SIMPLE
 			#define MK_PARTICLES
 
-            #include "../../Lib/DepthOnly/Setup.hlsl"
+            #include_with_pragmas "../../Lib/DepthOnly/Setup.hlsl"
             ENDHLSL
         }
 
@@ -1384,6 +1512,21 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		Pass
         {
+            PackageRequirements 
+			{
+				"com.unity.render-pipelines.universal":"[7.0,16.99]"
+			}
+            Stencil
+			{
+				Ref [_StencilRef]
+				ReadMask [_StencilReadMask]
+				WriteMask [_StencilWriteMask]
+				Comp [_StencilComp]
+				Pass [_StencilPass]
+				Fail [_StencilFail]
+				ZFail [_StencilZFail]
+			}
+			
             Name "DepthNormals"
             Tags { "LightMode" = "DepthNormals" }
 
@@ -1392,7 +1535,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 2.5
-			#pragma exclude_renderers gles3 d3d11 ps4 ps5 xboxone wiiu n3ds switch
+			#pragma only_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
             #pragma vertex DepthNormalsVert
             #pragma fragment DepthNormalsFrag
@@ -1403,6 +1547,10 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#pragma shader_feature_local __ _MK_VERTEX_ANIMATION_MAP
             #pragma shader_feature_local __ _MK_ALBEDO_MAP
             #pragma shader_feature_local __ _MK_ALPHA_CLIPPING
+			#pragma shader_feature_local __ _MK_NORMAL_MAP
+			#pragma shader_feature_local __ _MK_DETAIL_NORMAL_MAP
+			#pragma shader_feature_local __ _MK_HEIGHT_MAP
+			#pragma shader_feature_local __ _MK_PARALLAX
 
             #pragma multi_compile_instancing
 			#pragma instancing_options procedural:ParticleInstancingSetup
@@ -1412,7 +1560,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_SIMPLE
 			#define MK_PARTICLES
 
-            #include "../../Lib/DepthNormals/Setup.hlsl"
+            #include_with_pragmas "../../Lib/DepthNormals/Setup.hlsl"
             ENDHLSL
         }
 		
@@ -1430,7 +1578,8 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 
             HLSLPROGRAM
             #pragma target 2.5
-			#pragma exclude_renderers gles3 d3d11 ps4 ps5 xboxone wiiu n3ds switch
+			#pragma only_renderers gles d3d9 d3d11_9x psp2 n3ds wiiu
+			
 
             #pragma vertex Universal2DVert
             #pragma fragment Universal2DFrag
@@ -1449,7 +1598,7 @@ Shader "MK/Toon/URP/Particles/Simple + Refraction"
 			#define MK_UNLIT
 			#define MK_PARTICLES
 
-            #include "../../Lib/Universal2D/Setup.hlsl"
+            #include_with_pragmas "../../Lib/Universal2D/Setup.hlsl"
 
             ENDHLSL
         }

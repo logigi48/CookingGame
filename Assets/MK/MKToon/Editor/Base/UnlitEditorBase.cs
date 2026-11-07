@@ -45,9 +45,14 @@ namespace MK.Toon.Editor
             _renderPipeline = renderPipeline;
         }
 
+        //CurvedWorldSupport
+        //CurvedWorldEditor
+        //protected MaterialProperty _curvedWorldBlendSettings;
+        //
+
         /////////////////////////////////////////////////////////////////////////////////////////////
-		// Properties                                                                              //
-		/////////////////////////////////////////////////////////////////////////////////////////////
+        // Properties                                                                              //
+        /////////////////////////////////////////////////////////////////////////////////////////////
         protected ShaderTemplate _shaderTemplate;
         protected RenderPipeline _renderPipeline; 
    
@@ -71,6 +76,7 @@ namespace MK.Toon.Editor
         protected MaterialProperty _albedoColor;
         protected MaterialProperty _alphaCutoff;
         protected MaterialProperty _albedoMap;
+        protected MaterialProperty _albedoMapIntensity;
 
         /////////////////
         // Stylize     //
@@ -96,6 +102,8 @@ namespace MK.Toon.Editor
         /////////////////
         // Advanced    //
         /////////////////
+        protected MaterialProperty _screenSpaceReflections;
+        protected MaterialProperty _screenSpaceReflectionsContributeTransparent;
         protected MaterialProperty _renderPriority;
         protected MaterialProperty _alembicMotionVectors;
 
@@ -140,6 +148,11 @@ namespace MK.Toon.Editor
         /// <param name="props"></param>
         protected virtual void FindProperties(MaterialProperty[] props)
         {
+            //CurvedWorldSupport
+            //CurvedWorldEditor
+            //_curvedWorldBlendSettings = FindProperty(Properties.curvedWorldBlendSettings.uniform.name, props, false);
+            //
+
             _surface = FindProperty(Properties.surface.uniform.name, props);
             _zWrite = FindProperty(Properties.zWrite.uniform.name, props);
             _blend = FindProperty(Properties.blend.uniform.name, props);
@@ -154,6 +167,7 @@ namespace MK.Toon.Editor
             _albedoColor = FindProperty(Properties.albedoColor.uniform.name, props);
             _alphaCutoff = FindProperty(Properties.alphaCutoff.uniform.name, props);
             _albedoMap = FindProperty(Properties.albedoMap.uniform.name, props);
+            _albedoMapIntensity = FindProperty(Properties.albedoMapIntensity.uniform.name, props);
 
             _colorGrading = FindProperty(Properties.colorGrading.uniform.name, props);
             _hue = FindProperty(Properties.hue.uniform.name, props);
@@ -175,6 +189,7 @@ namespace MK.Toon.Editor
             _dissolveBorderSize = FindProperty(Properties.dissolveBorderSize.uniform.name, props);
             _dissolveBorderColor = FindProperty(Properties.dissolveBorderColor.uniform.name, props);
             
+            _screenSpaceReflectionsContributeTransparent = FindProperty(Properties.screenSpaceReflectionsContributeTransparent.uniform.name, props, false);
             _renderPriority = FindProperty(Properties.renderPriority.uniform.name, props);
             _alembicMotionVectors = FindProperty(Properties.alembicMotionVectors.uniform.name, props, false);
 
@@ -463,7 +478,10 @@ namespace MK.Toon.Editor
 
         protected virtual void DrawAlbedoMap(MaterialEditor materialEditor)
         {
-            materialEditor.TexturePropertySingleLine(UI.albedoMap, _albedoMap, _albedoColor);
+            if(_albedoMap.textureValue == null)
+                materialEditor.TexturePropertySingleLine(UI.albedoMap, _albedoMap, _albedoColor);
+            else
+                materialEditor.TexturePropertySingleLine(UI.albedoMap, _albedoMap, _albedoColor, _albedoMapIntensity);
         }
 
         protected void DrawAlbedoScaleTransform(MaterialEditor materialEditor)
@@ -668,12 +686,24 @@ namespace MK.Toon.Editor
             }
         }
 
+        protected void DrawScreenSpaceReflections(MaterialEditor materialEditor, Material material)
+        {
+            #if URP_SCREEN_SPACE_REFLECTION
+            bool isTransparent = material.renderQueue >= (int) UnityEngine.Rendering.RenderQueue.Transparent;
+            if(_screenSpaceReflections != null)
+                materialEditor.ShaderProperty(_screenSpaceReflections, UI.screenSpaceReflections);
+            if(_screenSpaceReflectionsContributeTransparent != null && isTransparent)
+                materialEditor.ShaderProperty(_screenSpaceReflectionsContributeTransparent, UI.screenSpaceReflectionsContributeTransparent);
+            #endif
+        }
+
         /// <summary>
         /// Draw Advanced Content
         /// </summary>
         /// <param name="materialEditor"></param>
         protected virtual void DrawAdvancedContent(MaterialEditor materialEditor, Material material)
         {            
+            DrawScreenSpaceReflections(materialEditor, material);
             DrawPipeline(materialEditor);
             EditorHelper.Divider();
             DrawStencil(materialEditor, material);
@@ -699,6 +729,12 @@ namespace MK.Toon.Editor
             FindProperties(properties);
 
             //EditorGUI.BeginChangeCheck();
+            //CurvedWorldSupport
+            //CurvedWorldEditor
+            //if (_curvedWorldBlendSettings != null)
+            //    materialEditor.ShaderProperty(_curvedWorldBlendSettings, "Curved World Blend Settings");
+            //
+
             DrawOptions(materialEditor);
             DrawInput(materialEditor);
             DrawStylize(materialEditor);
@@ -786,6 +822,17 @@ namespace MK.Toon.Editor
             //No Keyword = Vertex Animation Map Off
         }
 
+        private void ManageKeywordsScreenSpaceReflections(Material material)
+        {
+            #if URP_SCREEN_SPACE_REFLECTION
+            bool isTransparent = material.renderQueue >= (int) UnityEngine.Rendering.RenderQueue.Transparent;
+            if(_screenSpaceReflections != null)
+                EditorHelper.SetKeyword(Properties.screenSpaceReflections.GetValue(material) == false, "_SCREENSPACEREFLECTIONS_OFF", material);
+            if(_screenSpaceReflectionsContributeTransparent != null && isTransparent)
+                EditorHelper.SetKeyword(Properties.screenSpaceReflectionsContributeTransparent.GetValue(material) == false && material.renderQueue >= (int) UnityEngine.Rendering.RenderQueue.Transparent, "_SCREENSPACEREFLECTIONSCONTRIBUTETRANSPARENT_OFF", material);
+            #endif
+        }
+
         private void ManageKeywordsAlembicMotionVecotrs(Material material)
         {
             #if UNITY_2023_2_OR_NEWER
@@ -821,6 +868,7 @@ namespace MK.Toon.Editor
             ManageKeywordsVertexAnimationMap(material);
             ManageKeywordsVertexAnimationStutter(material);
             ManageKeywordsAlembicMotionVecotrs(material);
+            ManageKeywordsScreenSpaceReflections(material);
             _particles.UpdateKeywords(material);
             _outline.ManageKeywordsOutline(material);
             _outline.ManageKeywordsOutlineNoise(material);

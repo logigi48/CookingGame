@@ -119,6 +119,7 @@ namespace MK.Toon.Editor
             _specularAnisotrophy = FindProperty(Properties.anisotropy.uniform.name, props);
             _lightTransmissionIntensity = FindProperty(Properties.lightTransmissionIntensity.uniform.name, props);
             _fresnelHighlights = FindProperty(Properties.fresnelHighlights.uniform.name, props);
+            _screenSpaceReflections = FindProperty(Properties.screenSpaceReflections.uniform.name, props, false);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +448,11 @@ namespace MK.Toon.Editor
                 materialEditor.TexturePropertySingleLine(UI.goochRamp, _goochRamp);
             materialEditor.TexturePropertySingleLine(UI.goochBrightMap, _goochBrightMap, _goochBrightColor);
             materialEditor.TexturePropertySingleLine(UI.goochDarkMap, _goochDarkMap, _goochDarkColor);
-            EditorHelper.DrawMinMaxFloatSlider(materialEditor, _goochDarkRemapMin, _goochDarkRemapMax, _goochDarkRemapMin.rangeLimits.x, _goochDarkRemapMax.rangeLimits.y, "Gooch Remap", UI.goochRemap, 0);
+
+            materialEditor.ShaderProperty(_goochDarkRemapFadeWithIndirect, UI.goochDarkRemapFadeWithIndirect);
+            
+            if(_goochDarkRemapFadeWithIndirect.floatValue > 0.5)
+                EditorHelper.DrawMinMaxFloatSlider(materialEditor, _goochDarkRemapMin, _goochDarkRemapMax, _goochDarkRemapMin.rangeLimits.x, _goochDarkRemapMax.rangeLimits.y, "Gooch Remap", UI.goochRemap, 0);
         }
 
         /////////////////
@@ -503,6 +508,7 @@ namespace MK.Toon.Editor
 
         protected override void DrawAdvancedContent(MaterialEditor materialEditor, Material material)
         {
+            DrawScreenSpaceReflections(materialEditor, material);
             DrawAdvancedLighting(materialEditor);
 
             EditorHelper.Divider();

@@ -9,7 +9,6 @@
 #ifndef MK_TOON_OUTLINE_ONLY_BASE
 	#define MK_TOON_OUTLINE_ONLY_BASE
 	
-	#include "../Core.hlsl"
 	#include "Data.hlsl"
 	#include "../Surface.hlsl"
 	#include "../Composite.hlsl"
@@ -47,6 +46,16 @@
 		#ifdef MK_VERTEX_ANIMATION
 			vertexInput.vertex.xyz = VertexAnimation(PASS_VERTEX_ANIMATION_ARG(_VertexAnimationMap, PASS_VERTEX_ANIMATION_UV(vertexOutput.uv), _VertexAnimationIntensity, _VertexAnimationFrequency.xyz, vertexInput.vertex.xyz, vertexInput.normal));
 		#endif
+
+		//CurvedWorldSupport
+		//CurvedWorldVertexTransformations
+		/*
+			Replace on the Vertex Transformation code the following:
+			- v.vertex => vertexInput.vertex
+			- v.normal => vertexInput.normal
+			- v.tangent => vertexInput.tangent
+		*/
+		//
 
 		#ifndef MK_LEGACY_SCREEN_SCALING
 			#if (defined(USING_STEREO_MATRICES) || defined(MK_MULTI_PASS_STEREO_SCALING)) && defined(MK_OUTLINE_HULL_CLIP)
@@ -93,8 +102,10 @@
 			);
 			float3 positionWorld = mul(scale, vertexInput.vertex.xyz);
 			positionWorld = mul(MATRIX_M, float4(positionWorld, 1.0)).xyz;
+			vertexOutput.positionWorld = positionWorld;
 		#elif defined(MK_OUTLINE_HULL_OBJECT)
 			float3 worldPos = mul(MATRIX_M, float4(vertexInput.vertex.xyz, 1.0)).xyz;
+			vertexOutput.positionWorld = worldPos;
 			float distHullObject = lerp(1, distance(_WorldSpaceCameraPos, worldPos), _OutlineConstantSize);
 
 			#if defined(MK_OUTLINE_DATA_UV7)
@@ -128,6 +139,7 @@
 				half3 normalClip = ComputeNormalObjectToClipSpace(vertexInput.normal.xyz) * lerp(1, vertexOutput.svPositionClip.w, _OutlineConstantSize);
 				vertexOutput.svPositionClip.xy += 2 * oScale * outlineSize * SafeDivide(normalClip.xy, _ScreenParams.xy) * scale;
 			#endif
+			vertexOutput.positionWorld = ComputeObjectToWorldSpace(vertexInput.vertex.xyz);
 		#else
 			vertexOutput.svPositionClip = ComputeObjectToClipSpace(vertexInput.vertex.xyz);
 		#endif
@@ -203,8 +215,12 @@
 
 		mkFragmentOutput.svTarget0 = surface.final;
 		#ifdef MK_WRITE_RENDERING_LAYERS
-			uint renderingLayers = GetMeshRenderingLayer();
-			mkFragmentOutput.svTarget1 = float4(EncodeMeshRenderingLayer(renderingLayers), 0, 0, 0);
+			#if UNITY_VERSION >= 60020000
+				mkFragmentOutput.svTarget1 = EncodeMeshRenderingLayer();
+			#else //UNITY_VERSION >= 202220
+				uint renderingLayers = GetMeshRenderingLayer();
+				mkFragmentOutput.svTarget1 = float4(EncodeMeshRenderingLayer(renderingLayers), 0, 0, 0);
+			#endif
 		#endif
 
 		return mkFragmentOutput;

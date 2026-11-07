@@ -10,10 +10,15 @@ namespace MK.Toon
 {
     public static class Uniforms
     {
+        //CurvedWorldSupport
+        //CurvedWorldEditor
+        //public static readonly Uniform curvedWorldBlendSettings = new Uniform("_CurvedWorldBendSettings");
+        //
+
         /////////////////
         // Options     //
         /////////////////
-        public static readonly Uniform workflow      = new Uniform("_Workflow");
+        public static readonly Uniform workflow = new Uniform("_Workflow");
         public static readonly Uniform renderFace    = new Uniform("_RenderFace");
         public static readonly Uniform surface       = new Uniform("_Surface");
         public static readonly Uniform zWrite        = new Uniform("_ZWrite");
@@ -31,6 +36,7 @@ namespace MK.Toon
         public static readonly Uniform albedoColor                 = new Uniform("_AlbedoColor");
         public static readonly Uniform alphaCutoff                 = new Uniform("_AlphaCutoff");
         public static readonly Uniform albedoMap                   = new Uniform("_AlbedoMap");
+        public static readonly Uniform albedoMapIntensity          = new Uniform("_AlbedoMapIntensity");
         public static readonly Uniform specularColor               = new Uniform("_SpecularColor");
         public static readonly Uniform metallic                    = new Uniform("_Metallic");
         public static readonly Uniform smoothness                  = new Uniform("_Smoothness");
@@ -83,7 +89,7 @@ namespace MK.Toon
         public static readonly Uniform lightBands                       = new Uniform("_LightBands");
         public static readonly Uniform lightBandsScale                  = new Uniform("_LightBandsScale");
         public static readonly Uniform lightThreshold                   = new Uniform("_LightThreshold");
-        public static readonly Uniform additionalLightsThreshold         = new Uniform("_AdditionalLightsThreshold");
+        public static readonly Uniform additionalLightsThreshold        = new Uniform("_AdditionalLightsThreshold");
         public static readonly Uniform additionalLightsFalloff          = new Uniform("_AdditionalLightsFalloff");
         public static readonly Uniform thresholdMap                     = new Uniform("_ThresholdMap");
         public static readonly Uniform thresholdMapScale                = new Uniform("_ThresholdMapScale");
@@ -92,8 +98,9 @@ namespace MK.Toon
         public static readonly Uniform goochBrightColor                 = new Uniform("_GoochBrightColor");
         public static readonly Uniform goochBrightMap                   = new Uniform("_GoochBrightMap");
         public static readonly Uniform goochDarkColor                   = new Uniform("_GoochDarkColor");
-        public static readonly Uniform goochDarkRemapMin                    = new Uniform("_GoochDarkRemapMin");
-        public static readonly Uniform goochDarkRemapMax                    = new Uniform("_GoochDarkRemapMax");
+        public static readonly Uniform goochDarkRemapMin                = new Uniform("_GoochDarkRemapMin");
+        public static readonly Uniform goochDarkRemapMax                = new Uniform("_GoochDarkRemapMax");
+        public static readonly Uniform goochDarkRemapFadeWithIndirect   = new Uniform("_GoochDarkRemapFadeWithIndirect");
         public static readonly Uniform goochDarkMap                     = new Uniform("_GoochDarkMap");
         public static readonly Uniform colorGrading                     = new Uniform("_ColorGrading");
         public static readonly Uniform hue                              = new Uniform("_Hue");
@@ -142,6 +149,8 @@ namespace MK.Toon
         /////////////////
         // Advanced    //
         /////////////////
+        public static readonly Uniform screenSpaceReflections = new Uniform("_ScreenSpaceReflections");
+        public static readonly Uniform screenSpaceReflectionsContributeTransparent = new Uniform("_ScreenSpaceReflectionsContributeTransparent");
         public static readonly Uniform diffuse                    = new Uniform("_Diffuse");
         public static readonly Uniform specular                   = new Uniform("_Specular");
         public static readonly Uniform specularIntensity          = new Uniform("_SpecularIntensity");

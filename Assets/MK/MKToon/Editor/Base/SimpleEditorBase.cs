@@ -69,6 +69,7 @@ namespace MK.Toon.Editor
         protected MaterialProperty _goochDarkColor;
         protected MaterialProperty _goochDarkRemapMin;
         protected MaterialProperty _goochDarkRemapMax;
+        protected MaterialProperty _goochDarkRemapFadeWithIndirect;
         protected MaterialProperty _iridescence;
         protected MaterialProperty _iridescenceRamp;
         protected MaterialProperty _iridescenceSize;
@@ -156,6 +157,7 @@ namespace MK.Toon.Editor
             _goochDarkColor = FindProperty(Properties.goochDarkColor.uniform.name, props);
             _goochDarkRemapMin = FindProperty(Properties.goochDarkRemapMin.uniform.name, props);
             _goochDarkRemapMax = FindProperty(Properties.goochDarkRemapMax.uniform.name, props);
+            _goochDarkRemapFadeWithIndirect = FindProperty(Properties.goochDarkRemapFadeWithIndirect.uniform.name, props);
             _iridescence = FindProperty(Properties.iridescence.uniform.name, props);
             _iridescenceRamp = FindProperty(Properties.iridescenceRamp.uniform.name, props);
             _iridescenceSize = FindProperty(Properties.iridescenceSize.uniform.name, props);
@@ -446,7 +448,10 @@ namespace MK.Toon.Editor
             materialEditor.ShaderProperty(_goochBrightColor, UI.goochBrightMap);
             materialEditor.ShaderProperty(_goochDarkColor, UI.goochDarkMap);
 
-            EditorHelper.DrawMinMaxFloatSlider(materialEditor, _goochDarkRemapMin, _goochDarkRemapMax, _goochDarkRemapMin.rangeLimits.x, _goochDarkRemapMax.rangeLimits.y, "Gooch Remap", UI.goochRemap, 0);
+            materialEditor.ShaderProperty(_goochDarkRemapFadeWithIndirect, UI.goochDarkRemapFadeWithIndirect);
+            
+            if(_goochDarkRemapFadeWithIndirect.floatValue > 0.5)
+                EditorHelper.DrawMinMaxFloatSlider(materialEditor, _goochDarkRemapMin, _goochDarkRemapMax, _goochDarkRemapMin.rangeLimits.x, _goochDarkRemapMax.rangeLimits.y, "Gooch Remap", UI.goochRemap, 0);
         }
 
         protected void DrawRimHeader()
@@ -630,6 +635,7 @@ namespace MK.Toon.Editor
 
         protected override void DrawAdvancedContent(MaterialEditor materialEditor, Material material)
         {
+            DrawScreenSpaceReflections(materialEditor, material);
             DrawAdvancedLighting(materialEditor);
             
             EditorHelper.Divider();

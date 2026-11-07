@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45a7e03f10407fd45b5733c98f9f9109, type: 3}
+  m_Name: PotatoSliced
+  m_EditorClassIdentifier: Assembly-CSharp::FoodData
+  foodName: PotatoSliced
+  meshPrefab: {fileID: 2872850889241494905, guid: c3b7fba7242984e488663ad1da8ec3d5,
+    type: 3}
+  possibleTransitions:
+  - actionRequired: 3
+    requiredProgress: 100
+    nextStage: {fileID: 11400000, guid: c26164fd4ce63e4438e48efa10f33244, type: 2}

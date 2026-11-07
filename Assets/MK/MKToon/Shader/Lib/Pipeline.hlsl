@@ -581,7 +581,6 @@
 			else
 				ndc.y *= aspect.y;
 			ndc.xy *= scale;
-			ndc.xy *= nullNdc.w;
 		#endif
 
 		return ndc.xy;
@@ -666,7 +665,7 @@
 	// Other
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	#if defined(MK_URP) && UNITY_VERSION >= 202220
-		#define MK_TIME _TimeParameters
+		#define MK_TIME _Time
 	#else
 		#define MK_TIME _Time
 	#endif

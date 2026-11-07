@@ -15,11 +15,16 @@ namespace MK.Toon
         internal static readonly string shaderVariantPBSName = "Physically Based";
         internal static readonly string shaderVariantSimpleName = "Simple";
         internal static readonly string shaderVariantUnlitName = "Unlit";
+        
+        //CurvedWorldSupport
+        //CurvedWorldEditor
+        //public static readonly Vector4Property curvedWorldBlendSettings = new Vector4Property(Uniforms.curvedWorldBlendSettings);
+        //
 
         /////////////////
         // Options     //
         /////////////////
-        public static readonly EnumProperty<Workflow> workflow          = new EnumProperty<Workflow>(Uniforms.workflow, Keywords.workflow);
+        public static readonly EnumProperty<Workflow> workflow = new EnumProperty<Workflow>(Uniforms.workflow, Keywords.workflow);
         public static readonly EnumProperty<RenderFace> renderFace      = new EnumProperty<RenderFace>(Uniforms.renderFace);
         public static readonly SurfaceProperty surface                  = new SurfaceProperty(Uniforms.surface, Keywords.surface);
         public static readonly EnumProperty<ZWrite> zWrite              = new EnumProperty<ZWrite>(Uniforms.zWrite);
@@ -37,6 +42,7 @@ namespace MK.Toon
         public static readonly ColorProperty albedoColor                         = new ColorProperty(Uniforms.albedoColor);
         public static readonly RangeProperty alphaCutoff                         = new RangeProperty(Uniforms.alphaCutoff, 0, 1);
         public static readonly TextureProperty albedoMap                         = new TextureProperty(Uniforms.albedoMap, Keywords.albedoMap);
+        public static readonly RangeProperty albedoMapIntensity                  = new RangeProperty(Uniforms.albedoMapIntensity, 0f, 1f);
         public static readonly TilingProperty mainTiling                         = new TilingProperty(Uniforms.albedoMap);
         public static readonly OffsetProperty mainOffset                         = new OffsetProperty(Uniforms.albedoMap);
         public static readonly ColorProperty specularColor                       = new ColorProperty(Uniforms.specularColor);
@@ -102,8 +108,9 @@ namespace MK.Toon
         public static readonly ColorProperty goochBrightColor                      = new ColorProperty(Uniforms.goochBrightColor);
         public static readonly TextureProperty goochBrightMap                      = new TextureProperty(Uniforms.goochBrightMap, Keywords.goochBrightMap);
         public static readonly ColorProperty goochDarkColor                        = new ColorProperty(Uniforms.goochDarkColor);
-        public static readonly ColorProperty goochDarkRemapMin                         = new ColorProperty(Uniforms.goochDarkRemapMin);
-        public static readonly ColorProperty goochDarkRemapMax                         = new ColorProperty(Uniforms.goochDarkRemapMax);
+        public static readonly ColorProperty goochDarkRemapMin                     = new ColorProperty(Uniforms.goochDarkRemapMin);
+        public static readonly ColorProperty goochDarkRemapMax                     = new ColorProperty(Uniforms.goochDarkRemapMax);
+        public static readonly IntProperty goochDarkRemapFadeWithIndirect          = new IntProperty(Uniforms.goochDarkRemapFadeWithIndirect);
         public static readonly TextureProperty goochDarkMap                        = new TextureProperty(Uniforms.goochDarkMap, Keywords.goochDarkMap);
         public static readonly EnumProperty<ColorGrading> colorGrading             = new EnumProperty<ColorGrading>(Uniforms.colorGrading, Keywords.colorGrading);
         public static readonly RangeProperty hue                                   = new RangeProperty(Uniforms.hue, 0f, 1f);
@@ -151,6 +158,8 @@ namespace MK.Toon
         /////////////////
         // Advanced    //
         /////////////////
+        public static readonly FBoolProperty screenSpaceReflections = new FBoolProperty(Uniforms.screenSpaceReflections, "_SCREENSPACEREFLECTIONS_OFF");
+        public static readonly FBoolProperty screenSpaceReflectionsContributeTransparent = new FBoolProperty(Uniforms.screenSpaceReflectionsContributeTransparent, "_SCREENSPACEREFLECTIONSCONTRIBUTETRANSPARENT_OFF");
         public static readonly EnumProperty<Diffuse> diffuse                        = new EnumProperty<Diffuse>(Uniforms.diffuse, Keywords.diffuse);
         public static readonly SpecularProperty specular                            = new SpecularProperty(Uniforms.specular, Keywords.specular);
         public static readonly RangeProperty specularIntensity                      = new RangeProperty(Uniforms.specularIntensity, 0);

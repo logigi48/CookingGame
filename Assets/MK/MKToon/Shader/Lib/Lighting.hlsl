@@ -9,8 +9,6 @@
 #ifndef MK_TOON_LIGHTING
 	#define MK_TOON_LIGHTING
 
-	#include "Core.hlsl"
-
 	#if defined(MK_URP)
 		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 	#elif defined(MK_LWRP)
@@ -362,7 +360,9 @@
 		#ifdef MK_INDIRECT
 			#if defined(MK_URP) || defined(MK_LWRP)
 				#if UNITY_VERSION >= 60000009
-					#if defined(DYNAMICLIGHTMAP_ON)
+					#if defined(_SCREEN_SPACE_IRRADIANCE)
+    					gi.diffuse = SAMPLE_GI(_ScreenSpaceIrradiance, surfaceData.svPositionClip.xy);
+					#elif defined(DYNAMICLIGHTMAP_ON)
 						gi.diffuse = SAMPLE_GI(surfaceData.lightmapUV.xy, surfaceData.lightmapUV.zw, surfaceData.lightmapUV.rgb, surfaceData.normalWorld);
 					#elif !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
 						gi.diffuse = SAMPLE_GI(surfaceData.lightmapUV.rgb,
@@ -608,7 +608,11 @@
 					half3 LightDir = half3(LightToWorld * rsqrt(distanceSqr));
 
 					float lightRangeSqr = Rcp(distanceAndSpotAttenuation.x);
-					light.distanceAttenuation = saturate(saturate((1 - (distanceSqr / lightRangeSqr)) * 5.0) * Rcp(1.0 + 25.0 * distanceSqr / lightRangeSqr)) * AngleAttenuation(spotDirection.xyz, LightDir, distanceAndSpotAttenuation.zw);
+					#if(META_QUEST_NO_SPOTLIGHTS_LIGHT_LOOP)
+						light.distanceAttenuation = DistanceAttenuation(distanceSqr, distanceAndSpotAttenuation.xy);
+					#else
+						light.distanceAttenuation = saturate(saturate((1 - (distanceSqr / lightRangeSqr)) * 5.0) * Rcp(1.0 + 25.0 * distanceSqr / lightRangeSqr)) * AngleAttenuation(spotDirection.xyz, LightDir, distanceAndSpotAttenuation.zw);
+					#endif
 				}
 			#endif
 		#endif
@@ -1078,7 +1082,7 @@
 			//Gooch needs to be applied on diffuse only to not distract other light styles such as indirect, spec, lightTransmission
 			half diffuseContrib = max(diffuse.r, max(diffuse.g, diffuse.b));
 			half3 goochDarkRemapped = lerp(half3(0,0,0), surface.goochDark.rgb, Remap3(surface.indirect.rgb, half3(0, 0, 0), MK_GOOCH_REMAP_MAX_INPUT, _GoochDarkRemapMin.xxx, _GoochDarkRemapMax.xxx));
-			gooch = goochRamp * lerp(goochDarkRemapped, surface.goochBright.rgb, diffuseContrib);
+			gooch = goochRamp * lerp(lerp(surface.goochDark.rgb, goochDarkRemapped, _GoochDarkRemapFadeWithIndirect), surface.goochBright.rgb, diffuseContrib);
 
 			//#ifdef MK_GOOCH_RAMP
 			//	gooch.rgb = lerp(gooch.rgb, SampleRamp2D(PASS_TEXTURE_2D(_GoochRamp, SAMPLER_CLAMPED_MAIN), half2(diffuse.a, light.distanceAttenuation)).rgb, _GoochRampIntensity);
