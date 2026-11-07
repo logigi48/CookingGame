@@ -1,9 +1,7 @@
 fileFormatVersion: 2
-<<<<<<<< Updated upstream:Assets/Scripts/Foods/FoodData/pasta.asset.meta
-guid: 08cd45219de1e8c4e9ffa38c93d062dd
-========
-guid: c26164fd4ce63e4438e48efa10f33244
->>>>>>>> Stashed changes:Assets/Scripts/Foods/FoodData/PotatoSlicedFried.asset.meta
+
+guid: 1cc2f9c4cd4a0e643a2e6c76b743b8b4
+
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000

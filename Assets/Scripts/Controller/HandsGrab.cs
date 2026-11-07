@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HandsGrab : MonoBehaviour
 {
-    // 1. A clean State Machine replaces the confusing boolean "_check"
+    // A clean State Machine replaces the confusing boolean "_check"
     public enum GrabState { Idle, Reaching, Holding }
 
     [Header("Core Settings")]
@@ -17,16 +17,15 @@ public class HandsGrab : MonoBehaviour
 
     [Header("Reach Settings")]
     [SerializeField] private float raycastDistance = 50f;
-    [SerializeField] private float reachSpeed = 10f;
     [SerializeField] private float reachSnapDistance = 0.3f; // How close the hand must be to snap
     [SerializeField] private float reachTimeout = 1.5f; // Failsafe so the hand doesn't get stuck
 
-    // Expose this for HandCollide.cs
+    // Expose this for HandCollide.cs so we don't break your collision script
     public bool isGrabbed => currentState == GrabState.Holding;
 
     private GrabState currentState = GrabState.Idle;
     
-    // We cache these to avoid using GetComponent every single frame!
+    // Cached references
     private Interfaces.IInteractable currentInteractable;
     private Transform grabbedTransform;
     private Rigidbody grabbedRigidbody;
@@ -37,9 +36,7 @@ public class HandsGrab : MonoBehaviour
 
         if (currentState == GrabState.Holding && grabbedTransform != null)
         {
-            // FIX: Lerp the LOCAL rotation to Quaternion.identity.
-            // Quaternion.identity means "0,0,0" in local space, forcing it to 
-            // perfectly and smoothly align with its parent (the tip) over time.
+            // Smoothly align the grabbed item to the socket's (tip) rotation using local space
             grabbedTransform.localRotation = Quaternion.Lerp(grabbedTransform.localRotation, Quaternion.identity, 5f * Time.deltaTime);
         }
     }
@@ -96,12 +93,13 @@ public class HandsGrab : MonoBehaviour
             Bounds bounds = targetCollider.bounds;
             Vector3 topCenter = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z);
             
-            // Optional: Add a tiny offset if you want it slightly ABOVE the highest point
+            // Add a tiny offset so it hovers slightly above the highest point
             float hoverHeight = topCenter.y + 0.02f; 
 
             float distX = topCenter.x - hand.position.x;
             float distZ = topCenter.z - hand.position.z;
 
+            // Map inputs to your friend's AdjustMoveVector
             if (isLeft)
             {
                 HandsMovement.Instance.AdjustMoveVector(distX, distZ, 0f, 0f);
@@ -113,10 +111,10 @@ public class HandsGrab : MonoBehaviour
                 HandsMovement.Instance.Rmove.y = hoverHeight;
             }
 
-            // 2. Use Vector3 to properly check X, Y, AND Z distance!
+            // 2. Use Vector3 to properly check X, Y, AND Z distance
             if (Vector3.Distance(hand.position, topCenter) <= reachSnapDistance)
             {
-                break;
+                break; // Hand successfully reached the target!
             }
 
             yield return null; 
@@ -124,7 +122,6 @@ public class HandsGrab : MonoBehaviour
 
         ProcessReachedObject(target, interactable);
     }
-    
 
     private void ProcessReachedObject(Transform target, Interfaces.IInteractable interactable)
     {
@@ -143,14 +140,9 @@ public class HandsGrab : MonoBehaviour
 
             if (grabbedRigidbody != null) grabbedRigidbody.isKinematic = true;
 
+            // Center it on the hand socket
             grabbedTransform.parent = tip;
-            
-            // Center it on the hand
             grabbedTransform.localPosition = Vector3.zero;
-            
-            // FIX: Force the rotation to perfectly align with the hand tip!
-            // This cancels out any weird physics tumbling that happened on the floor.
-            grabbedTransform.localRotation = Quaternion.identity; 
 
             currentInteractable.Grabed = true;
             currentState = GrabState.Holding;

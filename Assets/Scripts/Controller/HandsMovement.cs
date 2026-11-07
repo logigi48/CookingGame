@@ -8,24 +8,11 @@ public class HandsMovement : MonoBehaviour
 
     public bool RLocked;
     public bool LLocked;
-<<<<<<< Updated upstream:Assets/Scripts/HandsMovement.cs
-
-    [Header("")]
-
-    public float HandsSensitivity;
-    public float LerpSpeed;
-    public Transform RArmTarget;
-    public Transform LArmTarget;
-
-    Vector3 Lmove;
-    Vector3 Rmove;
-=======
     
     [HideInInspector] public Vector3 Lmove;
     [HideInInspector] public Vector3 Rmove;
     
     [Header("")]
->>>>>>> Stashed changes:Assets/Scripts/Controller/HandsMovement.cs
 
     public float LerpSpeed;
     
@@ -50,14 +37,8 @@ public class HandsMovement : MonoBehaviour
     float Lv;
     float Rh;
     float Rv;
-<<<<<<< Updated upstream:Assets/Scripts/HandsMovement.cs
 
-    [Header("Limits")]
-
-    public Vector2 HorizontalMinMax;
-    public Vector2 VerticalMinMax;
-    public float MaxRad;
-=======
+    
     Vector3 LOriginalPos;
     Vector3 ROriginalPos;
     
@@ -83,7 +64,6 @@ public class HandsMovement : MonoBehaviour
         Lmove = LOriginalPos;
         Rmove = ROriginalPos;
     }
->>>>>>> Stashed changes:Assets/Scripts/Controller/HandsMovement.cs
 
     void Update()
     {
@@ -99,37 +79,13 @@ public class HandsMovement : MonoBehaviour
             Rv = Input.GetAxis("Arrow Vertical");
         }
 
-<<<<<<< Updated upstream:Assets/Scripts/HandsMovement.cs
-        AddMovement(Lh, Lv, Rh, Rv);
 
-        Lmove.x = Mathf.Clamp(Lmove.x, HorizontalMinMax.x, HorizontalMinMax.y);
-        Rmove.x = Mathf.Clamp(Rmove.x, HorizontalMinMax.x, HorizontalMinMax.y);
-
-        Lmove.z = Mathf.Clamp(Lmove.z, VerticalMinMax.x, VerticalMinMax.y);
-        Rmove.z = Mathf.Clamp(Rmove.z, VerticalMinMax.x, VerticalMinMax.y);
-
-        float Ldist = Lmove.magnitude;
-        float Rdist = Rmove.magnitude;
-
-        if (Ldist > MaxRad)
-            Lmove = Lmove.normalized * MaxRad;
-
-        if (Rdist > MaxRad)
-            Rmove = Rmove.normalized * MaxRad;
-=======
         AdjustMoveVector(Lh, Lv, Rh, Rv);
->>>>>>> Stashed changes:Assets/Scripts/Controller/HandsMovement.cs
 
         LArmTarget.localPosition = Vector3.Lerp(LArmTarget.localPosition, new Vector3(Lmove.x, LArmTarget.localPosition.y, Lmove.z), LerpSpeed * Time.deltaTime);
         RArmTarget.localPosition = Vector3.Lerp(RArmTarget.localPosition, new Vector3(Rmove.x, RArmTarget.localPosition.y, Rmove.z), LerpSpeed * Time.deltaTime);
     }
-
-<<<<<<< Updated upstream:Assets/Scripts/HandsMovement.cs
-    public void AddMovement(float LH, float LV, float RH, float RV, float LY = 0f, float RY = 0f)
-    {
-        Lmove += new Vector3(LH, LY, LV) * HandsSensitivity * Time.deltaTime;
-        Rmove += new Vector3(RH, RY, RV) * HandsSensitivity * Time.deltaTime;
-=======
+    
     public void AdjustMoveVector(float LH, float LV, float RH, float RV)
     {
         Lmove += new Vector3(LH, 0f, LV) * (HandsSensitivity * Time.deltaTime);
@@ -156,6 +112,5 @@ public class HandsMovement : MonoBehaviour
         if (rdist > MaxRad)
             Rmove = Rmove.normalized * MaxRad;
         
->>>>>>> Stashed changes:Assets/Scripts/Controller/HandsMovement.cs
     }
 }

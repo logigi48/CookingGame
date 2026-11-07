@@ -15,7 +15,8 @@ MonoBehaviour:
   foodName: PotatoSliced
   meshPrefab: {fileID: 2872850889241494905, guid: c3b7fba7242984e488663ad1da8ec3d5,
     type: 3}
+  IconMaterial: {fileID: 0}
   possibleTransitions:
   - actionRequired: 3
     requiredProgress: 100
-    nextStage: {fileID: 11400000, guid: c26164fd4ce63e4438e48efa10f33244, type: 2}
+    nextStage: {fileID: 11400000, guid: 1cc2f9c4cd4a0e643a2e6c76b743b8b4, type: 2}

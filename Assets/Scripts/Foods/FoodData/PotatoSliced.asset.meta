@@ -1,9 +1,7 @@
 fileFormatVersion: 2
-<<<<<<<< Updated upstream:Assets/Scripts/Foods/FoodData/hotdogbunSliced.asset.meta
-guid: d89b63217e0a9044db3812ca920c87d8
-========
-guid: 223e486c749b0de429ad6039cca669ef
->>>>>>>> Stashed changes:Assets/Scripts/Foods/FoodData/PotatoSliced.asset.meta
+
+guid: 8f74c253c0dad6346ac7e2dad9f1a8a5
+
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000
